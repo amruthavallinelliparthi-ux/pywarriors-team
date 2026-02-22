@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Nexus Library · smart management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 10% 30%, #1e3c72, #2a5298);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.93);
+            backdrop-filter: blur(10px);
+            border-radius: 36px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.2) inset;
+            overflow: hidden;
+            animation: floatIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes floatIn {
+            0% { opacity: 0; transform: scale(0.96) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(145deg, #0b1c3a, #1d3b66);
+            color: white;
+            padding: 28px 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 4px solid #ffb347;
+        }
+
+        .header h1 {
+            font-size: 2.3rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 span {
+            background: #ffb347;
+            color: #0b1c3a;
+            font-size: 1rem;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            font-weight: 300;
+        }
+
+        .main-content {
+            padding: 30px 32px;
+        }
+
+        /* —— stats cards with glass —— */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 22px 16px;
+            text-align: center;
+            box-shadow: 0 15px 30px -10px rgba(0,20,40,0.2);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 35px -8px #0b1c3a4d;
+            background: white;
+        }
+
+        .stat-card h3 {
+            font-weight: 500;
+            color: #1e2f4a;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-card .number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e3c72, #2e5990);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+        }
+
+        /* —— compact, bold menu grid —— */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .menu-btn {
+            padding: 14px 6px;
+            border: none;
+            border-radius: 60px;
+            background: white;
+            color: #0b1c3a;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 8px 16px -8px rgba(0,32,64,0.25);
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid rgba(43, 88, 151, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .menu-btn:hover {
+            background: #1d3b66;
+            color: white;
+            border-color: #ffb347;
+            transform: scale(1.02);
+            box-shadow: 0 12px 22px -10px #0a1f3b;
+        }
+
+        .menu-btn:active { transform: scale(0.98); }
+
+        /* —— action panel —— */
+        .action-panel {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 28px 30px;
+            margin: 28px 0 32px 0;
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 15px 40px -12px #041125;
+            animation: panelPop 0.3s ease;
+        }
+
+        @keyframes panelPop {
+            0% { opacity: 0; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .action-panel h2 {
+            color: #102a44;
+            font-weight: 600;
+            font-size: 1.8rem;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 8px solid #ffb347;
+            padding-left: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #1c3f5c;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 0.95rem;
+            letter-spacing: -0.2px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: white;
+            border: 2px solid #dbe2ef;
+            border-radius: 24px;
+            font-size: 1rem;
+            transition: 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #2a5a9c;
+            box-shadow: 0 0 0 4px rgba(42,90,156,0.15);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.15s;
+            margin-right: 14px;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: #1d3b66;
+            color: white;
+            box-shadow: 0 8px 18px -6px #1d3b66;
+        }
+
+        .btn-primary:hover {
+            background: #143157;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 22px -6px #0f284a;
+        }
+
+        .btn-secondary {
+            background: #eceff8;
+            color: #1d3b66;
+            border: 1px solid #bac8dc;
+        }
+
+        .btn-secondary:hover {
+            background: #dae1ef;
+        }
+
+        .btn-danger {
+            background: #bc3f4b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #a22c38;
+            transform: translateY(-2px);
+        }
+
+        /* —— table —— */
+        .books-table-container {
+            background: white;
+            border-radius: 28px;
+            overflow: auto;
+            box-shadow: 0 20px 45px -15px #101f33;
+            margin-top: 20px;
+            border: 1px solid #eef3fc;
+        }
+
+        .books-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        .books-table th {
+            background: #eef3fc;
+            color: #102a44;
+            font-weight: 600;
+            padding: 20px 16px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .books-table td {
+            padding: 18px 16px;
+            border-bottom: 1px solid #dde5f0;
+            color: #1b3149;
+            font-weight: 500;
+        }
+
+        .books-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .books-table tr:hover td {
+            background: #f3f8ff;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-available {
+            background: #dff0d8;
+            color: #1f6d1f;
+        }
+
+        .status-issued {
+            background: #ffdede;
+            color: #b33;
+        }
+
+        .search-highlight {
+            background: #ffecb3;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 2px 4px;
+        }
+
+        .message {
+            padding: 16px 22px;
+            border-radius: 40px;
+            margin: 16px 0 0 0;
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+            border-left: 6px solid;
+            animation: slideMsg 0.25s;
+        }
+
+        .message-success {
+            background: #dff0d8ee;
+            color: #1f5f2b;
+            border-left-color: #2e7d32;
+        }
+
+        .message-error {
+            background: #ffdddd;
+            color: #a12525;
+            border-left-color: #c62828;
+        }
+
+        .message-info {
+            background: #d3e5ff;
+            color: #14477a;
+            border-left-color: #1e4b8f;
+        }
+
+        .hidden { display: none; }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .icon-btn {
+            border: none;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+            cursor: pointer;
+            transition: all 0.1s;
+            border: 1px solid #cad4e3;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .icon-btn:hover {
+            background: #1d3b66;
+            color: white;
+            border-color: #ffb347;
+        }
+
+        .edit-btn { background: #fff3d6; border-color: #f1c40f; }
+        .delete-btn { background: #ffe2e2; border-color: #e97171; color: #a42424; }
+        .issue-btn { background: #e0f0e8; border-color: #2e8b6c; color: #166b4a; }
+        .return-btn { background: #d9eafb; border-color: #2f6699; color: #103f66; }
+
+        .edit-btn:hover, .delete-btn:hover, .issue-btn:hover, .return-btn:hover {
+            background: #1d3b66;
+            color: white;
+            border-color: #ffb347;
+        }
+
+        .refresh-indicator {
+            display: inline-block;
+            transition: transform 0.5s;
+        }
+        .menu-btn:active .refresh-indicator {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📘 NEXUS·LIB <span>v2.0</span></h1>
+        <p>⚡ instant · persistent · smart library core</p>
+    </div>
+
+    <div class="main-content">
+
+        <!-- stats with live update -->
+        <div class="stats-container">
+            <div class="stat-card"><h3>📚 total books</h3><div class="number" id="totalBooks">0</div></div>
+            <div class="stat-card"><h3>✅ available</h3><div class="number" id="availableBooks">0</div></div>
+            <div class="stat-card"><h3>📌 issued</h3><div class="number" id="issuedBooks">0</div></div>
+        </div>
+
+        <!-- compact menu with icons -->
+        <div class="menu-grid">
+            <button class="menu-btn" onclick="showPanel('add')">➕ ADD</button>
+            <button class="menu-btn" onclick="showPanel('search')">🔍 SEARCH</button>
+            <button class="menu-btn" onclick="showPanel('issue')">📤 ISSUE</button>
+            <button class="menu-btn" onclick="showPanel('return')">📥 RETURN</button>
+            <button class="menu-btn" onclick="showPanel('update')">✏️ UPDATE</button>
+            <button class="menu-btn" onclick="showPanel('delete')">🗑️ DELETE</button>
+            <button class="menu-btn" onclick="refreshView()"><span class="refresh-indicator">🔄</span> REFRESH</button>
+        </div>
+
+        <!-- unified message area -->
+        <div id="messageArea" class="message hidden"></div>
+
+        <!-- action panels (same structure, no functional change) -->
+        <div id="addPanel" class="action-panel hidden">
+            <h2>➕ add new book</h2>
+            <div class="form-group"><label>📘 book ID</label><input type="text" id="bookId" placeholder="unique id e.g. LIB-42"></div>
+            <div class="form-group"><label>📖 title</label><input type="text" id="title" placeholder="book title"></div>
+            <div class="form-group"><label>✍️ author</label><input type="text" id="author" placeholder="author name"></div>
+            <button class="btn btn-primary" onclick="addBook()">✔ add book</button>
+            <button class="btn btn-secondary" onclick="hideAllPanels()">cancel</button>
+        </div>
+
+        <div id="searchPanel" class="action-panel hidden">
+            <h2>🔍 instant search</h2>
+            <div class="form-group"><label>🔎 type title / author</label><input type="text" id="searchInput" placeholder="e.g. orwell" onkeyup="searchBooks()" autocomplete="off"></div>
+        </div>
+
+        <div id="issuePanel" class="action-panel hidden">
+            <h2>📤 issue book</h2>
+            <div class="form-group"><label>🆔 book ID</label><input type="text" id="issueBookId" placeholder="enter book id"></div>
+            <button class="btn btn-primary" onclick="issueBook()">✔ issue</button>
+            <button class="btn btn-secondary" onclick="hideAllPanels()">cancel</button>
+        </div>
+
+        <div id="returnPanel" class="action-panel hidden">
+            <h2>📥 return book</h2>
+            <div class="form-group"><label>🆔 book ID</label><input type="text" id="returnBookId" placeholder="enter book id"></div>
+            <button class="btn btn-primary" onclick="returnBook()">✔ return</button>
+            <button class="btn btn-secondary" onclick="hideAllPanels()">cancel</button>
+        </div>
+
+        <div id="updatePanel" class="action-panel hidden">
+            <h2>✏️ update details</h2>
+            <div class="form-group"><label>🆔 book ID</label><input type="text" id="updateBookId" placeholder="id to update" onchange="loadBookForUpdate()"></div>
+            <div class="form-group"><label>📖 new title</label><input type="text" id="updateTitle" placeholder="new title (optional)"></div>
+            <div class="form-group"><label>✍️ new author</label><input type="text" id="updateAuthor" placeholder="new author (optional)"></div>
+            <button class="btn btn-primary" onclick="updateBook()">✔ update</button>
+            <button class="btn btn-secondary" onclick="hideAllPanels()">cancel</button>
+        </div>
+
+        <div id="deletePanel" class="action-panel hidden">
+            <h2>🗑️ delete book</h2>
+            <div class="form-group"><label>🆔 book ID</label><input type="text" id="deleteBookId" placeholder="book id to delete"></div>
+            <button class="btn btn-danger" onclick="deleteBook()">⚠ delete</button>
+            <button class="btn btn-secondary" onclick="hideAllPanels()">cancel</button>
+        </div>
+
+        <!-- books table with actions -->
+        <div class="books-table-container">
+            <table class="books-table">
+                <thead><tr><th>ID</th><th>Title</th><th>Author</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="booksTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- LIBRARY CLASS (enhanced, but same core) ----------
+        class Library {
+            constructor() {
+                this.books = this.loadBooks();
+            }
+
+            loadBooks() {
+                const saved = localStorage.getItem('nexus_library_books');
+                return saved ? JSON.parse(saved) : {};
+            }
+
+            saveBooks() {
+                localStorage.setItem('nexus_library_books', JSON.stringify(this.books));
+                this.updateStatistics();
+                this.displayBooks();
+            }
+
+            addBook(id, title, author) {
+                if (!id.trim() || !title.trim() || !author.trim()) return { success: false, message: '❌ all fields required' };
+                if (this.books[id]) return { success: false, message: '⚠️ duplicate book ID' };
+                this.books[id] = { title: title.trim(), author: author.trim(), issued: false };
+                this.saveBooks();
+                return { success: true, message: `✅ "${title}" added` };
+            }
+
+            getBook(id) { return this.books[id] || null; }
+
+            searchBooks(term) {
+                term = term.toLowerCase();
+                return Object.entries(this.books).filter(([_, b]) => b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term))
+                    .map(([id, b]) => ({ id, ...b }));
+            }
+
+            issueBook(id) {
+                if (!this.books[id]) return { success: false, message: '❌ id not found' };
+                if (this.books[id].issued) return { success: false, message: '⛔ already issued' };
+                this.books[id].issued = true;
+                this.saveBooks();
+                return { success: true, message: `📤 book issued (${id})` };
+            }
+
+            returnBook(id) {
+                if (!this.books[id]) return { success: false, message: '❌ id not found' };
+                if (!this.books[id].issued) return { success: false, message: '⚠️ book not issued' };
+                this.books[id].issued = false;
+                this.saveBooks();
+                return { success: true, message: `📥 book returned (${id})` };
+            }
+
+            updateBook(id, newTitle, newAuthor) {
+                if (!this.books[id]) return { success: false, message: '❌ id not found' };
+                if (newTitle.trim()) this.books[id].title = newTitle.trim();
+                if (newAuthor.trim()) this.books[id].author = newAuthor.trim();
+                if (!newTitle.trim() && !newAuthor.trim()) return { success: false, message: '⚠️ nothing to update' };
+                this.saveBooks();
+                return { success: true, message: `✏️ book ${id} updated` };
+            }
+
+            deleteBook(id) {
+                if (!this.books[id]) return { success: false, message: '❌ id not found' };
+                delete this.books[id];
+                this.saveBooks();
+                return { success: true, message: `🗑️ book ${id} deleted` };
+            }
+
+            getStatistics() {
+                const arr = Object.values(this.books);
+                const total = arr.length;
+                const issued = arr.filter(b => b.issued).length;
+                return { total, issued, available: total - issued };
+            }
+
+            updateStatistics() {
+                const s = this.getStatistics();
+                document.getElementById('totalBooks').innerText = s.total;
+                document.getElementById('availableBooks').innerText = s.available;
+                document.getElementById('issuedBooks').innerText = s.issued;
+            }
+
+            displayBooks(searchTerm = '') {
+                const tbody = document.getElementById('booksTableBody');
+                const all = Object.entries(this.books).map(([id, b]) => ({ id, ...b }));
+                if (!all.length) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px;">📭 empty library · add a book</td></tr>`;
+                    return;
+                }
+
+                let filtered = all;
+                if (searchTerm.trim()) {
+                    const term = searchTerm.trim().toLowerCase();
+                    filtered = all.filter(b => b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term));
+                }
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px;">🔎 no matches</td></tr>`;
+                    return;
+                }
+
+                const term = searchTerm.trim();
+                const regex = term ? new RegExp(`(${term})`, 'gi') : null;
+
+                tbody.innerHTML = filtered.map(book => {
+                    const statusClass = book.issued ? 'status-issued' : 'status-available';
+                    const statusText = book.issued ? '📕 issued' : '📗 available';
+
+                    let titleDisplay = book.title;
+                    let authorDisplay = book.author;
+                    if (regex) {
+                        titleDisplay = book.title.replace(regex, '<span class="search-highlight">$1</span>');
+                        authorDisplay = book.author.replace(regex, '<span class="search-highlight">$1</span>');
+                    }
+
+                    return `<tr>
+                        <td><code>${book.id}</code></td>
+                        <td>${titleDisplay}</td>
+                        <td>${authorDisplay}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td class="action-buttons">
+                            <button class="icon-btn edit-btn" onclick="editBook('${book.id}')">✏️ edit</button>
+                            <button class="icon-btn ${book.issued ? 'return-btn' : 'issue-btn'}" 
+                                onclick="${book.issued ? `returnBookById('${book.id}')` : `issueBookById('${book.id}')`}">
+                                ${book.issued ? '📥 return' : '📤 issue'}
+                            </button>
+                            <button class="icon-btn delete-btn" onclick="deleteBookById('${book.id}')">🗑️ del</button>
+                        </td>
+                    </tr>`;
+                }).join('');
+            }
+        }
+
+        // GLOBAL INSTANCE
+        window.library = new Library();
+
+        // helpers
+        function showMessage(msg, type = 'info') {
+            const el = document.getElementById('messageArea');
+            el.innerText = msg;
+            el.className = `message message-${type}`;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 3200);
+        }
+
+        window.hideAllPanels = function() {
+            document.querySelectorAll('.action-panel').forEach(p => p.classList.add('hidden'));
+        };
+
+        window.showPanel = function(panelId) {
+            hideAllPanels();
+            const panel = document.getElementById(panelId + 'Panel');
+            if (panel) panel.classList.remove('hidden');
+
+            // optional clear
+            if (panelId === 'add') {
+                document.getElementById('bookId').value = '';
+                document.getElementById('title').value = '';
+                document.getElementById('author').value = '';
+            } else if (panelId === 'search') {
+                document.getElementById('searchInput').value = '';
+                library.displayBooks();
+            } else if (panelId === 'issue') document.getElementById('issueBookId').value = '';
+            else if (panelId === 'return') document.getElementById('returnBookId').value = '';
+            else if (panelId === 'update') {
+                document.getElementById('updateBookId').value = '';
+                document.getElementById('updateTitle').value = '';
+                document.getElementById('updateAuthor').value = '';
+            } else if (panelId === 'delete') document.getElementById('deleteBookId').value = '';
+        };
+
+        // ---- book functions (bridge) ----
+        window.addBook = function() {
+            const id = document.getElementById('bookId').value.trim();
+            const t = document.getElementById('title').value.trim();
+            const a = document.getElementById('author').value.trim();
+            const res = library.addBook(id, t, a);
+            showMessage(res.message, res.success ? 'success' : 'error');
+            if (res.success) hideAllPanels();
+        };
+
+        window.searchBooks = function() {
+            const term = document.getElementById('searchInput').value;
+            library.displayBooks(term);
+        };
+
+        window.issueBook = function() {
+            const id = document.getElementById('issueBookId').value.trim();
+            if (!id) return showMessage('enter book ID', 'error');
+            const res = library.issueBook(id);
+            showMessage(res.message, res.success ? 'success' : 'error');
+            if (res.success) hideAllPanels();
+        };
+
+        window.issueBookById = function(id) {
+            const res = library.issueBook(id);
+            showMessage(res.message, res.success ? 'success' : 'error');
+        };
+
+        window.returnBook = function() {
+            const id = document.getElementById('returnBookId').value.trim();
+            if (!id) return showMessage('enter book ID', 'error');
+            const res = library.returnBook(id);
+            showMessage(res.message, res.success ? 'success' : 'error');
+            if (res.success) hideAllPanels();
+        };
+
+        window.returnBookById = function(id) {
+            const res = library.returnBook(id);
+            showMessage(res.message, res.success ? 'success' : 'error');
+        };
+
+        window.loadBookForUpdate = function() {
+            const id = document.getElementById('updateBookId').value.trim();
+            const book = library.getBook(id);
+            if (book) {
+                document.getElementById('updateTitle').value = book.title;
+                document.getElementById('updateAuthor').value = book.author;
+            } else {
+                document.getElementById('updateTitle').value = '';
+                document.getElementById('updateAuthor').value = '';
+                showMessage('ID not found', 'error');
+            }
+        };
+
+        window.updateBook = function() {
+            const id = document.getElementById('updateBookId').value.trim();
+            const t = document.getElementById('updateTitle').value.trim();
+            const a = document.getElementById('updateAuthor').value.trim();
+            if (!id) return showMessage('enter book ID', 'error');
+            const res = library.updateBook(id, t, a);
+            showMessage(res.message, res.success ? 'success' : 'error');
+            if (res.success) hideAllPanels();
+        };
+
+        window.editBook = function(id) {
+            showPanel('update');
+            document.getElementById('updateBookId').value = id;
+            loadBookForUpdate();
+        };
+
+        window.deleteBook = function() {
+            const id = document.getElementById('deleteBookId').value.trim();
+            if (!id) return showMessage('enter book ID', 'error');
+            if (confirm(`delete book ${id}?`)) {
+                const res = library.deleteBook(id);
+                showMessage(res.message, res.success ? 'success' : 'error');
+                if (res.success) hideAllPanels();
+            }
+        };
+
+        window.deleteBookById = function(id) {
+            if (confirm(`permanently delete ${id}?`)) {
+                const res = library.deleteBook(id);
+                showMessage(res.message, res.success ? 'success' : 'error');
+            }
+        };
+
+        window.refreshView = function() {
+            library.displayBooks(document.getElementById('searchInput')?.value || '');
+            showMessage('🔄 view synced', 'info');
+        };
+
+        // initial display & stats
+        library.updateStatistics();
+        library.displayBooks();
+
+        // hotkey: clear search when escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const searchInp = document.getElementById('searchInput');
+                if (searchInp) { searchInp.value = ''; library.displayBooks(); }
+            }
+        });
+    })();
+</script>
+</body>
+</html>

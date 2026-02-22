@@ -1,0 +1,667 @@
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Student Management System</title>  
+    <style>  
+        * {  
+            margin: 0;  
+            padding: 0;  
+            box-sizing: border-box;  
+        }  body {  
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  
+        min-height: 100vh;  
+        padding: 20px;  
+    }  
+
+    .container {  
+        max-width: 1000px;  
+        margin: 0 auto;  
+        background: white;  
+        border-radius: 15px;  
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);  
+        overflow: hidden;  
+    }  
+
+    .header {  
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  
+        color: white;  
+        padding: 40px;  
+        text-align: center;  
+    }  
+
+    .header h1 {  
+        font-size: 2.8em;  
+        margin-bottom: 10px;  
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);  
+    }  
+
+    .header p {  
+        font-size: 1.2em;  
+        opacity: 0.9;  
+    }  
+
+    .nav-menu {  
+        display: flex;  
+        background: #2c3e50;  
+        padding: 15px;  
+        gap: 10px;  
+        flex-wrap: wrap;  
+        justify-content: center;  
+    }  
+
+    .nav-btn {  
+        padding: 12px 30px;  
+        border: none;  
+        border-radius: 8px;  
+        font-size: 1.1em;  
+        font-weight: 600;  
+        cursor: pointer;  
+        transition: all 0.3s ease;  
+        color: white;  
+        min-width: 150px;  
+    }  
+
+    .nav-btn:hover {  
+        transform: translateY(-3px);  
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);  
+    }  
+
+    .nav-btn.add {  
+        background: #27ae60;  
+    }  
+
+    .nav-btn.view {  
+        background: #2980b9;  
+    }  
+
+    .nav-btn.delete {  
+        background: #c0392b;  
+    }  
+
+    .nav-btn.exit {  
+        background: #7f8c8d;  
+    }  
+
+    .content {  
+        padding: 30px;  
+        min-height: 500px;  
+        background: #f8f9fa;  
+    }  
+
+    .section {  
+        display: none;  
+        animation: fadeIn 0.5s ease;  
+    }  
+
+    .section.active {  
+        display: block;  
+    }  
+
+    @keyframes fadeIn {  
+        from { opacity: 0; transform: translateY(20px); }  
+        to { opacity: 1; transform: translateY(0); }  
+    }  
+
+    .form-container {  
+        background: white;  
+        padding: 30px;  
+        border-radius: 10px;  
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);  
+        max-width: 500px;  
+        margin: 0 auto;  
+    }  
+
+    .form-title {  
+        color: #333;  
+        margin-bottom: 25px;  
+        text-align: center;  
+        font-size: 1.8em;  
+        border-bottom: 3px solid #667eea;  
+        padding-bottom: 10px;  
+        display: inline-block;  
+    }  
+
+    .form-group {  
+        margin-bottom: 20px;  
+    }  
+
+    .form-group label {  
+        display: block;  
+        margin-bottom: 8px;  
+        font-weight: 600;  
+        color: #555;  
+        font-size: 1.1em;  
+    }  
+
+    .form-group input {  
+        width: 100%;  
+        padding: 12px 15px;  
+        border: 2px solid #e0e0e0;  
+        border-radius: 8px;  
+        font-size: 1em;  
+        transition: all 0.3s ease;  
+    }  
+
+    .form-group input:focus {  
+        outline: none;  
+        border-color: #667eea;  
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);  
+    }  
+
+    .btn-submit {  
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  
+        color: white;  
+        padding: 14px 30px;  
+        border: none;  
+        border-radius: 8px;  
+        font-size: 1.2em;  
+        font-weight: 600;  
+        cursor: pointer;  
+        width: 100%;  
+        transition: all 0.3s ease;  
+    }  
+
+    .btn-submit:hover {  
+        transform: translateY(-2px);  
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);  
+    }  
+
+    .records-container {  
+        background: white;  
+        padding: 30px;  
+        border-radius: 10px;  
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);  
+    }  
+
+    .student-card {  
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);  
+        border-radius: 10px;  
+        padding: 20px;  
+        margin-bottom: 15px;  
+        display: flex;  
+        justify-content: space-between;  
+        align-items: center;  
+        transition: all 0.3s ease;  
+        border-left: 5px solid #667eea;  
+    }  
+
+    .student-card:hover {  
+        transform: translateX(5px);  
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);  
+    }  
+
+    .student-info h3 {  
+        color: #333;  
+        margin-bottom: 8px;  
+        font-size: 1.3em;  
+    }  
+
+    .student-info p {  
+        color: #666;  
+        margin: 5px 0;  
+        font-size: 1.1em;  
+    }  
+
+    .student-info i {  
+        color: #667eea;  
+        margin-right: 8px;  
+        width: 20px;  
+    }  
+
+    .btn-delete-single {  
+        background: #e74c3c;  
+        color: white;  
+        border: none;  
+        padding: 10px 20px;  
+        border-radius: 6px;  
+        cursor: pointer;  
+        font-weight: 600;  
+        transition: all 0.3s ease;  
+    }  
+
+    .btn-delete-single:hover {  
+        background: #c0392b;  
+        transform: scale(1.05);  
+    }  
+
+    .message {  
+        padding: 15px 25px;  
+        border-radius: 8px;  
+        margin-bottom: 20px;  
+        display: none;  
+        animation: slideDown 0.3s ease;  
+        font-weight: 500;  
+    }  
+
+    @keyframes slideDown {  
+        from { transform: translateY(-20px); opacity: 0; }  
+        to { transform: translateY(0); opacity: 1; }  
+    }  
+
+    .message.success {  
+        background: #d4edda;  
+        color: #155724;  
+        border: 1px solid #c3e6cb;  
+        display: block;  
+    }  
+
+    .message.error {  
+        background: #f8d7da;  
+        color: #721c24;  
+        border: 1px solid #f5c6cb;  
+        display: block;  
+    }  
+
+    .message.info {  
+        background: #d1ecf1;  
+        color: #0c5460;  
+        border: 1px solid #bee5eb;  
+        display: block;  
+    }  
+
+    .empty-state {  
+        text-align: center;  
+        padding: 50px;  
+        color: #6c757d;  
+    }  
+
+    .empty-state i {  
+        font-size: 4em;  
+        margin-bottom: 20px;  
+        color: #667eea;  
+        opacity: 0.5;  
+    }  
+
+    .empty-state p {  
+        font-size: 1.2em;  
+    }  
+
+    .stats-card {  
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  
+        color: white;  
+        padding: 20px;  
+        border-radius: 10px;  
+        margin-bottom: 25px;  
+        display: flex;  
+        justify-content: space-around;  
+        text-align: center;  
+    }  
+
+    .stat-item {  
+        flex: 1;  
+    }  
+
+    .stat-value {  
+        font-size: 2.5em;  
+        font-weight: bold;  
+    }  
+
+    .stat-label {  
+        font-size: 1em;  
+        opacity: 0.9;  
+    }  
+
+    .delete-all-section {  
+        margin-top: 30px;  
+        text-align: center;  
+        padding: 20px;  
+        background: #fff3f3;  
+        border-radius: 10px;  
+        border: 2px dashed #e74c3c;  
+    }  
+
+    .btn-delete-all {  
+        background: #e74c3c;  
+        color: white;  
+        border: none;  
+        padding: 12px 30px;  
+        border-radius: 6px;  
+        font-size: 1.1em;  
+        font-weight: 600;  
+        cursor: pointer;  
+        transition: all 0.3s ease;  
+    }  
+
+    .btn-delete-all:hover {  
+        background: #c0392b;  
+        transform: scale(1.05);  
+    }  
+
+    .modal {  
+        display: none;  
+        position: fixed;  
+        top: 0;  
+        left: 0;  
+        width: 100%;  
+        height: 100%;  
+        background: rgba(0,0,0,0.5);  
+        justify-content: center;  
+        align-items: center;  
+        z-index: 1000;  
+    }  
+
+    .modal.active {  
+        display: flex;  
+    }  
+
+    .modal-content {  
+        background: white;  
+        padding: 30px;  
+        border-radius: 15px;  
+        max-width: 400px;  
+        text-align: center;  
+        animation: modalSlide 0.3s ease;  
+    }  
+
+    @keyframes modalSlide {  
+        from { transform: translateY(-50px); opacity: 0; }  
+        to { transform: translateY(0); opacity: 1; }  
+    }  
+
+    .modal-content h3 {  
+        color: #e74c3c;  
+        margin-bottom: 15px;  
+        font-size: 1.5em;  
+    }  
+
+    .modal-content p {  
+        color: #666;  
+        margin-bottom: 25px;  
+    }  
+
+    .modal-actions {  
+        display: flex;  
+        gap: 15px;  
+        justify-content: center;  
+    }  
+
+    .btn-confirm, .btn-cancel {  
+        padding: 10px 25px;  
+        border: none;  
+        border-radius: 6px;  
+        font-weight: 600;  
+        cursor: pointer;  
+        transition: all 0.3s ease;  
+    }  
+
+    .btn-confirm {  
+        background: #e74c3c;  
+        color: white;  
+    }  
+
+    .btn-cancel {  
+        background: #95a5a6;  
+        color: white;  
+    }  
+
+    .btn-confirm:hover, .btn-cancel:hover {  
+        transform: translateY(-2px);  
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);  
+    }  
+</style>
+
+</head>  
+<body>  
+    <div class="container">  
+        <div class="header">  
+            <h1>🎓 Student Management System</h1>  
+            <p>Efficiently manage your student records</p>  
+        </div>  <div class="nav-menu">  
+        <button class="nav-btn add" onclick="showSection('add')">➕ Add Student</button>  
+        <button class="nav-btn view" onclick="showSection('view')">📋 View Students</button>  
+        <button class="nav-btn delete" onclick="showDeleteModal()">🗑️ Delete Student</button>  
+        <button class="nav-btn exit" onclick="exitApplication()">🚪 Exit</button>  
+    </div>  
+
+    <div class="content">  
+        <!-- Message Display -->  
+        <div id="message" class="message"></div>  
+
+        <!-- Add Student Section -->  
+        <div id="addSection" class="section active">  
+            <div class="form-container">  
+                <h2 class="form-title">Add New Student</h2>  
+                <form id="studentForm" onsubmit="addStudent(event)">  
+                    <div class="form-group">  
+                        <label for="studentId">🆔 Student ID:</label>  
+                        <input type="text" id="studentId" placeholder="Enter student ID" required>  
+                    </div>  
+                    <div class="form-group">  
+                        <label for="studentName">👤 Student Name:</label>  
+                        <input type="text" id="studentName" placeholder="Enter student name" required>  
+                    </div>  
+                    <div class="form-group">  
+                        <label for="studentAge">📅 Student Age:</label>  
+                        <input type="number" id="studentAge" placeholder="Enter student age" min="1" max="100" required>  
+                    </div>  
+                    <button type="submit" class="btn-submit">💾 Save Student Record</button>  
+                </form>  
+            </div>  
+        </div>  
+
+        <!-- View Students Section -->  
+        <div id="viewSection" class="section">  
+            <div class="records-container">  
+                <h2 class="form-title">Student Records</h2>  
+                <div class="stats-card" id="statsCard">  
+                    <div class="stat-item">  
+                        <div class="stat-value" id="totalStudents">0</div>  
+                        <div class="stat-label">Total Students</div>  
+                    </div>  
+                    <div class="stat-item">  
+                        <div class="stat-value" id="averageAge">0</div>  
+                        <div class="stat-label">Average Age</div>  
+                    </div>  
+                </div>  
+                <div id="studentList">  
+                    <!-- Student records will be displayed here -->  
+                </div>  
+            </div>  
+        </div>  
+
+        <!-- Delete All Section (Hidden by default) -->  
+        <div id="deleteAllSection" class="section">  
+            <div class="delete-all-section">  
+                <h3 style="color: #e74c3c; margin-bottom: 15px;">⚠️ Delete All Students</h3>  
+                <p style="margin-bottom: 20px;">This action will permanently delete all student records. This cannot be undone!</p>  
+                <button class="btn-delete-all" onclick="deleteAllStudents()">🗑️ Delete All Students</button>  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+
+<!-- Delete Confirmation Modal -->  
+<div id="deleteModal" class="modal">  
+    <div class="modal-content">  
+        <h3>⚠️ Confirm Delete</h3>  
+        <p>Are you sure you want to delete this student? This action cannot be undone.</p>  
+        <div class="modal-actions">  
+            <button class="btn-confirm" onclick="confirmDelete()">Yes, Delete</button>  
+            <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>  
+        </div>  
+    </div>  
+</div>  
+
+<script>  
+    // Student data storage  
+    let students = JSON.parse(localStorage.getItem('students')) || [];  
+    let studentToDelete = null;  
+
+    // Show different sections  
+    function showSection(section) {  
+        document.getElementById('addSection').classList.remove('active');  
+        document.getElementById('viewSection').classList.remove('active');  
+        document.getElementById('deleteAllSection').classList.remove('active');  
+          
+        if (section === 'add') {  
+            document.getElementById('addSection').classList.add('active');  
+        } else if (section === 'view') {  
+            document.getElementById('viewSection').classList.add('active');  
+            displayStudents();  
+        } else if (section === 'delete') {  
+            document.getElementById('deleteAllSection').classList.add('active');  
+        }  
+          
+        clearMessage();  
+    }  
+
+    // Add student  
+    function addStudent(event) {  
+        event.preventDefault();  
+          
+        const id = document.getElementById('studentId').value.trim();  
+        const name = document.getElementById('studentName').value.trim();  
+        const age = parseInt(document.getElementById('studentAge').value);  
+
+        // Validation  
+        if (!id || !name || !age) {  
+            showMessage('Please fill in all fields', 'error');  
+            return;  
+        }  
+
+        // Check for duplicate ID  
+        if (students.some(s => s.id === id)) {  
+            showMessage('Student ID already exists!', 'error');  
+            return;  
+        }  
+
+        // Add student  
+        const student = { id, name, age };  
+        students.push(student);  
+        localStorage.setItem('students', JSON.stringify(students));  
+          
+        // Clear form  
+        document.getElementById('studentForm').reset();  
+          
+        showMessage('Student added successfully!', 'success');  
+          
+        // Update view if it's active  
+        if (document.getElementById('viewSection').classList.contains('active')) {  
+            displayStudents();  
+        }  
+    }  
+
+    // Display all students  
+    function displayStudents() {  
+        const studentList = document.getElementById('studentList');  
+        const totalStudents = document.getElementById('totalStudents');  
+        const averageAge = document.getElementById('averageAge');  
+
+        if (students.length === 0) {  
+            studentList.innerHTML = `  
+                <div class="empty-state">  
+                    <i>📭</i>  
+                    <p>No students found. Add some students to get started!</p>  
+                </div>  
+            `;  
+            totalStudents.textContent = '0';  
+            averageAge.textContent = '0';  
+            return;  
+        }  
+
+        // Calculate statistics  
+        totalStudents.textContent = students.length;  
+        const avgAge = Math.round(students.reduce((sum, s) => sum + s.age, 0) / students.length);  
+        averageAge.textContent = avgAge;  
+
+        // Display students  
+        studentList.innerHTML = students.map(student => `  
+            <div class="student-card">  
+                <div class="student-info">  
+                    <h3>${student.name}</h3>  
+                    <p><i>🆔</i> ID: ${student.id}</p>  
+                    <p><i>📅</i> Age: ${student.age} years</p>  
+                </div>  
+                <button class="btn-delete-single" onclick="openDeleteModal('${student.id}')">Delete</button>  
+            </div>  
+        `).join('');  
+    }  
+
+    // Open delete modal for single student  
+    function openDeleteModal(studentId) {  
+        studentToDelete = studentId;  
+        document.getElementById('deleteModal').classList.add('active');  
+    }  
+
+    // Close delete modal  
+    function closeDeleteModal() {  
+        document.getElementById('deleteModal').classList.remove('active');  
+        studentToDelete = null;  
+    }  
+
+    // Confirm delete single student  
+    function confirmDelete() {  
+        if (studentToDelete) {  
+            students = students.filter(s => s.id !== studentToDelete);  
+            localStorage.setItem('students', JSON.stringify(students));  
+            showMessage('Student deleted successfully!', 'success');  
+            displayStudents();  
+            closeDeleteModal();  
+        }  
+    }  
+
+    // Show delete all modal  
+    function showDeleteModal() {  
+        if (students.length === 0) {  
+            showMessage('No students to delete!', 'info');  
+            return;  
+        }  
+          
+        if (confirm('⚠️ Are you sure you want to delete ALL students? This action cannot be undone!')) {  
+            deleteAllStudents();  
+        }  
+    }  
+
+    // Delete all students  
+    function deleteAllStudents() {  
+        students = [];  
+        localStorage.setItem('students', JSON.stringify(students));  
+        showMessage('All students deleted successfully!', 'success');  
+          
+        if (document.getElementById('viewSection').classList.contains('active')) {  
+            displayStudents();  
+        }  
+    }  
+
+    // Exit application  
+    function exitApplication() {  
+        if (confirm('Are you sure you want to exit?')) {  
+            showMessage('Thank you for using Student Management System!', 'info');  
+            setTimeout(() => {  
+                // Clear any active sections and show add section  
+                showSection('add');  
+            }, 2000);  
+        }  
+    }  
+
+    // Show message  
+    function showMessage(text, type) {  
+        const messageDiv = document.getElementById('message');  
+        messageDiv.textContent = text;  
+        messageDiv.className = `message ${type}`;  
+          
+        setTimeout(() => {  
+            messageDiv.style.display = 'none';  
+            messageDiv.className = 'message';  
+        }, 3000);  
+    }  
+
+    // Clear message  
+    function clearMessage() {  
+        const messageDiv = document.getElementById('message');  
+        messageDiv.style.display = 'none';  
+        messageDiv.className = 'message';  
+    }  
+
+    // Initialize display if view section is active  
+    document.addEventListener('DOMContentLoaded', () => {  
+        if (document.getElementById('viewSection').classList.contains('active')) {  
+            displayStudents();  
+        }  
+    });  
+</script>
+
+</body>  
+</html>  
